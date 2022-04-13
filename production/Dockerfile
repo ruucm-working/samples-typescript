@@ -2,8 +2,6 @@
 
 FROM node:16.14.2-buster
 
-RUN apt update && apt install -y ca-certificates
-
 ENV NODE_ENV=production
 WORKDIR /app
 
