@@ -1,5 +1,6 @@
 import { ActivityFailure, ApplicationFailure, WorkflowClient, WorkflowFailedError } from '@temporalio/client';
-import { Runtime, DefaultLogger, Worker } from '@temporalio/worker';
+import { DefaultLogger, Runtime, Worker } from '@temporalio/worker';
+import * as wf from '@temporalio/workflow';
 import assert from 'assert';
 import axios from 'axios';
 import { after, afterEach, before, describe, it } from 'mocha';
@@ -54,6 +55,14 @@ describe('example workflow', function () {
   it('returns correct result', async () => {
     const result = await execute();
     assert.equal(result, 'The answer is 42');
+  });
+
+  it.only('can stub activities', async () => {
+    console.log('stubbing');
+    sinon.stub(wf, 'proxyActivities').returns({ makeHTTPRequest: () => Promise.resolve('43') });
+    console.log('done stubbing');
+    const result = await httpWorkflow();
+    assert.equal(result, 'The answer is 43');
   });
 
   it('retries one failure', async () => {
