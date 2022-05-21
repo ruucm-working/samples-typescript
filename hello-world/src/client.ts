@@ -1,5 +1,5 @@
 // @@@SNIPSTART typescript-hello-client
-import { Connection, WorkflowClient } from '@temporalio/client';
+import { Connection, WorkflowClient, WorkflowIdReusePolicy } from '@temporalio/client';
 import { example } from './workflows';
 import { nanoid } from 'nanoid';
 
@@ -19,7 +19,8 @@ async function run() {
     args: ['Temporal'], // type inference works! args: [name: string]
     taskQueue: 'hello-world',
     // in practice, use a meaningful business id, eg customerId or transactionId
-    workflowId: 'workflow-' + nanoid(),
+    workflowId: 'workflow-static',
+    workflowIdReusePolicy: WorkflowIdReusePolicy.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE,
   });
   console.log(`Started workflow ${handle.workflowId}`);
 
