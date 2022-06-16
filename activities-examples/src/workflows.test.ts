@@ -32,8 +32,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  // TODO: Remove this once TestWorkflowEnvironment.teardown() closes the connection
-  await testEnv?.nativeConnection.close();
   await testEnv?.teardown();
 });
 
@@ -44,7 +42,7 @@ test('httpWorkflow with mock activity', async () => {
     taskQueue: 'test',
     workflowsPath: require.resolve('./workflows'),
     activities: {
-      makeHTTPRequest: async () => '99',
+      makeHTTPRequest: jest.fn(async () => '99'),
     },
   });
   await withWorker(worker, async () => {
