@@ -44,11 +44,12 @@ class SignalManager {
 
 const someSignal = wf.defineSignal<[number]>('something');
 
-export async function someInfiniteWorkflow(): Promise<void> {
+export async function someWorkflow(): Promise<void> {
   wf.setHandler(someSignal, async (_x) => {
     // run some activity or other async work here
   });
-  // Workflow never completes - blocked by interceptor
+  await wf.condition(() => wf.taskInfo().historyLength >= 2000);
+  await wf.continueAsNew<typeof someWorkflow>();
 }
 
 export const interceptors: wf.WorkflowInterceptorsFactory = () => {
@@ -88,11 +89,6 @@ export const interceptors: wf.WorkflowInterceptorsFactory = () => {
       {
         async handleSignal(input, next) {
           return await sm.wrapSignalHandler(input, next);
-        },
-        async execute(input, next) {
-          await next(input);
-          await wf.condition(() => wf.taskInfo().historyLength >= 2000);
-          await wf.continueAsNew<typeof someWorkflow>();
         },
       },
     ],
